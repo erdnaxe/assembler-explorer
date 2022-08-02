@@ -1,0 +1,117 @@
+:root {
+  color-scheme: dark;
+}
+
+html {
+  /* Default system sans-serif font */
+  font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, segoe ui, helvetica neue, helvetica, Cantarell, Ubuntu, roboto, noto, arial, sans-serif;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #1c1717;
+  color: #e8e3e3;
+}
+
+footer {
+  text-align: right;
+  font-size: 0.8em;
+  margin: 1em 1em;
+  color: #999999;
+}
+
+a,
+a:hover {
+  text-decoration: none;
+}
+
+a svg,
+button svg {
+  vertical-align: -0.125em;
+}
+
+button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 0.2rem;
+}
+
+button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.btn-assemble {
+  text-align: right;
+  padding-right: 1rem;
+  flex-grow: 1;
+}
+
+.btn-disassemble {
+  text-align: left;
+  padding-left: 1rem;
+}
+
+textarea {
+  resize: none;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem;
+  flex-grow: 1;
+  text-transform: uppercase;
+  background: #000000b0;
+}
+
+/* Vertical columns */
+.row {
+  flex-grow: 1;
+  display: flex;
+}
+
+.col {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.btn-row {
+  display: flex;
+}
+
+/* Notification */
+.notification {
+  position: fixed;
+  top: 1em;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 1170px;
+  background-color: inherit;
+  padding: 1em;
+}
+
+/* Colors */
+a,
+button {
+  color: #e8e3e3;
+}
+
+.notification,
+textarea {
+  border: 1px solid #1f1414;
+}
+
+a:hover,
+button:not(:disabled):hover {
+  color: #ff6666;
+}
+
+textarea:focus {
+  outline: none;
+  border-bottom: 1px #ff6666 solid;
+}

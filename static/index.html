@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="In-browser assembler and disassembler using Capstone and Keystone.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; img-src 'self'; connect-src 'self'">
+  <meta http-equiv="Referrer-Policy" content="no-referrer">
+  <title>disaweb - online assembler and disassembler</title>
+  <link href="layout.css" rel="stylesheet">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+
+<body>
+  <div class="notification" id="notif-loading-capstone">Loading Capstone disassembler</div>
+  <div class="notification" id="notif-loading-keystone">Loading Keystone assembler</div>
+  <div class="row">
+    <div class="col">
+      <textarea id="input-asm">
+XOR     EAX, EAX
+CDQ
+PUSH    RDX
+MOVABS  RBX, 0X68732F2F6E69622F
+PUSH    RBX
+PUSH    RSP
+POP     RDI
+PUSH    RDX
+PUSH    RDI
+PUSH    RSP
+POP     RSI
+MOV     AL, 0X3B
+SYSCALL
+</textarea>
+      <div class="btn-row">
+        <select>
+          <option value="x86">x86</option>
+          <option value="arm">ARM</option>
+          <option value="aarch64">AArch64</option>
+          <option value="hexagon">Hexagon</option>
+          <option value="mips">MIPS</option>
+          <option value="powerpc">PowerPC</option>
+          <option value="sparc">SPARC</option>
+          <option value="systemz">SystemZ</option>
+          <option value="xcore">XCore</option>
+          <option value="m68k">M68K</option>
+          <option value="m680x">M680X</option>
+          <option value="tms320c64x">TMS320C64x</option>
+          <option value="evm">EVM</option>
+          <option value="wasm">WASM</option>
+          <option value="mos65xx">MOS65XX</option>
+          <option value="bpf">BPF</option>
+          <option value="riscv">RISCV</option>
+        </select>
+        <button class="btn-assemble" id="btn-assemble" title="Assemble instructions (Ctrl+Enter)" disabled>
+          Assemble
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="col">
+      <textarea id="input-ops">31C0995248BB2F62696E2F2F736853545F5257545EB03B0F05</textarea>
+      <button class="btn-disassemble" id="btn-disassemble" title="Disassemble instructions (Ctrl+Enter)" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z" />
+        </svg>
+        Disassemble
+      </button>
+    </div>
+  </div>
+  <footer>Powered by <a href="https://github.com/erdnaxe/disaweb/">disaweb</a></footer>
+
+  <script type="module" src="main.js"></script>
+</body>
