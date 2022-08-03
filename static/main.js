@@ -13,14 +13,9 @@ function assemble () {
   document.getElementById('btn-assemble').disabled = true
   document.getElementById('btn-disassemble').disabled = true
 
-  const arch = ksc.KS_ARCH_X86
-  const mode = ksc.KS_MODE_64
-  const assembly = document.getElementById('input-asm').value
-  const address = 0
-
   // Create keystone instance
   const ksPtr = ksModule._malloc(4)
-  let err = ksModule._ks_open(arch, mode, ksPtr)
+  let err = ksModule._ks_open(ksArch, ksMode, ksPtr)
   if (err !== ksc.KS_ERR_OK) {
     ksModule._free(ksPtr)
     const errMsg = ksModule.UTF8ToString(ksModule._ks_strerror(err))
@@ -28,23 +23,15 @@ function assemble () {
     return
   }
 
-  // Configure syntax
-  const ksHandle = ksModule.getValue(ksPtr, '*')
-  err = ksModule._ks_option(ksHandle, ksc.KS_OPT_SYNTAX, ksc.KS_OPT_SYNTAX_INTEL)
-  if (err !== ksc.KS_ERR_OK) {
-    ksModule._ks_close(ksHandle)
-    ksModule._free(ksPtr)
-    const errMsg = ksModule.UTF8ToString(ksModule._ks_strerror(err))
-    console.log('error ks_option', errMsg)
-    return
-  }
-
   // Assemble
   // The 3rd 64-bit argument is split into 2 32-bit integers
+  const assembly = document.getElementById('input-asm').value
+  const address = 0
   const bufferPtr = ksModule.allocateUTF8(assembly)
   const insnPtr = ksModule._malloc(4)
   const sizePtr = ksModule._malloc(4)
   const countPtr = ksModule._malloc(4)
+  const ksHandle = ksModule.getValue(ksPtr, '*')
   ksModule._ks_asm(ksHandle, bufferPtr, address, 0x0, insnPtr, sizePtr, countPtr)
   err = ksModule._ks_errno(ksHandle)
   if (err !== ksc.KS_ERR_OK) {
@@ -85,14 +72,12 @@ function disassemble () {
   document.getElementById('btn-disassemble').disabled = true
 
   // TODO: test if input-ops value is hexstring
-  const arch = csc.CS_ARCH_X86
-  const mode = csc.CS_MODE_64
   const asm = document.getElementById('input-ops').value.match(/[0-9a-z]{2}/gi).map(t => parseInt(t, 16))
   const address = 0
 
   // Create capstone instance
   const csPtr = csModule._malloc(4)
-  let err = csModule._cs_open(arch, mode, csPtr)
+  let err = csModule._cs_open(csArch, csMode, csPtr)
   if (err !== csc.CS_ERR_OK) {
     csModule._free(csPtr)
     const errMsg = csModule.UTF8ToString(csModule._cs_strerror(err))
@@ -157,7 +142,26 @@ loadKeystoneModule().then((m) => {
   document.getElementById('btn-assemble').disabled = false
 })
 
+// Configuration state
+let ksArch = 4  // x86
+let ksMode = 8  // 64-bit
+let csArch = 3  // x86
+let csMode = 8  // 64-bit
+
 // Hook events
+document.getElementById('select-arch').addEventListener('change', (e) => {
+  const data = e.target.selectedOptions[0].dataset
+  ksArch = parseInt(data.ksArch) ?? 4
+  ksMode = parseInt(data.ksMode) ?? 8
+  csArch = parseInt(data.csArch) ?? 3
+  csMode = parseInt(data.csMode) ?? 8
+
+  // Enable editor only if selected architecture is available
+  document.getElementById('btn-assemble').disabled = !('ksArch' in data)
+  document.getElementById('btn-disassemble').disabled = !('csArch' in data)
+  document.getElementById('input-asm').readOnly = !('ksArch' in data)
+  document.getElementById('input-ops').readOnly = !('csArch' in data)
+})
 document.getElementById('btn-assemble').addEventListener('click', assemble)
 document.getElementById('btn-disassemble').addEventListener('click', disassemble)
 document.getElementById('input-asm').addEventListener('keydown', (e) => {

@@ -1,8 +1,8 @@
-# disaweb
+# Assembler Explorer
 
 <img src="static/favicon.svg" align="right" width="64px"/>
 
-In-browser assembler and disassembler using
+Interactive in-browser assembler and disassembler using
 [Capstone](https://github.com/capstone-engine/capstone)
 and [Keystone](https://github.com/keystone-engine/keystone).
 This tool focuses on simplicity and ease of use.

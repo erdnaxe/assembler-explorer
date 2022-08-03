@@ -4,10 +4,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="In-browser assembler and disassembler using Capstone and Keystone.">
+  <meta name="description" content="Interactive in-browser assembler and disassembler using Capstone and Keystone.">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-eval'; style-src 'self'; img-src 'self'; connect-src 'self'">
   <meta http-equiv="Referrer-Policy" content="no-referrer">
-  <title>disaweb - online assembler and disassembler</title>
+  <title>Assembler Explorer</title>
   <link href="layout.css" rel="stylesheet">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
@@ -33,24 +33,60 @@ MOV     AL, 0X3B
 SYSCALL
 </textarea>
       <div class="btn-row">
-        <select>
-          <option value="x86">x86</option>
-          <option value="arm">ARM</option>
-          <option value="aarch64">AArch64</option>
-          <option value="hexagon">Hexagon</option>
-          <option value="mips">MIPS</option>
-          <option value="powerpc">PowerPC</option>
-          <option value="sparc">SPARC</option>
-          <option value="systemz">SystemZ</option>
-          <option value="xcore">XCore</option>
-          <option value="m68k">M68K</option>
-          <option value="m680x">M680X</option>
-          <option value="tms320c64x">TMS320C64x</option>
-          <option value="evm">EVM</option>
-          <option value="wasm">WASM</option>
-          <option value="mos65xx">MOS65XX</option>
-          <option value="bpf">BPF</option>
-          <option value="riscv">RISCV</option>
+        <select id="select-arch">
+          <!-- Specify Keystone and Capstone instanciation arch and mode -->
+          <optgroup label="ARM">
+            <option data-ks-arch="1" data-ks-mode="1" data-cs-arch="0" data-cs-mode="0">arm - ARM 32-bit little-endian</option>
+            <option data-ks-arch="2" data-ks-mode="0" data-cs-arch="1" data-cs-mode="0">aarch64 - ARM 64-bit little-endian</option>
+            <option data-ks-arch="1" data-ks-mode="16" data-cs-arch="0" data-cs-mode="16">thumb - Thumb little-endian</option>
+            <option data-ks-arch="1" data-ks-mode="16" data-cs-arch="0" data-cs-mode="48">thumb-m - Thumb M-class little-endian</option>
+            <option data-ks-arch="1" data-ks-mode="65" data-cs-arch="0" data-cs-mode="64">armv8 - ARM V8 32-bit little-endian</option>
+            <option data-ks-arch="1" data-ks-mode="1073741889" data-cs-arch="0" data-cs-mode="2147483712">armv8be - ARM V8 32-bit big-endian</option>
+          </optgroup>
+          <optgroup label="MIPS">
+            <option data-ks-arch="3" data-ks-mode="1073741828" data-cs-arch="2" data-cs-mode="2147483652">mips - MIPS 32-bit big-endian</option>
+            <option data-ks-arch="3" data-ks-mode="4" data-cs-arch="2" data-cs-mode="4">mipsel - MIPS 32-bit little-endian</option>
+            <option data-ks-arch="3" data-ks-mode="4" data-cs-arch="2" data-cs-mode="2147483712">mips32r6 - MIPS32r6 32-bit big-endian</option>
+            <option data-ks-arch="3" data-ks-mode="1073741832" data-cs-arch="2" data-cs-mode="2147483656">mips64 - MIPS 64-bit big-endian</option>
+            <option data-ks-arch="3" data-ks-mode="8" data-cs-arch="2" data-cs-mode="8">mips64el - MIPS 64-bit little-endian</option>
+          </optgroup>
+          <optgroup label="x86">
+            <option data-ks-arch="4" data-ks-mode="4" data-cs-arch="3" data-cs-mode="1" selected>x16 - x86 16-bit little-endian</option>
+            <option data-ks-arch="4" data-ks-mode="4" data-cs-arch="3" data-cs-mode="4" selected>x32 - x86 32-bit little-endian</option>
+            <option data-ks-arch="4" data-ks-mode="8" data-cs-arch="3" data-cs-mode="8" selected>x64 - x86 64-bit little-endian</option>
+          </optgroup>
+          <optgroup label="PowerPC">
+            <option data-ks-arch="5" data-ks-mode="1073741828" data-cs-arch="4" data-cs-mode="2147483652">powerpc - PowerPC 32-bit big-endian</option>
+            <option data-ks-arch="5" data-ks-mode="1073741832" data-cs-arch="4" data-cs-mode="2147483656">powerpc64 - PowerPC 64-bit big-endian</option>
+            <option data-ks-arch="5" data-ks-mode="8" data-cs-arch="4" data-cs-mode="8">powerpc64le - PowerPC 64-bit little-endian</option>
+          </optgroup>
+          <optgroup label="SPARC">
+            <option data-ks-arch="6" data-ks-mode="1073741828" data-cs-arch="5" data-cs-mode="2147483648">sparc - SPARC 32-bit big-endian</option>
+            <option data-ks-arch="6" data-ks-mode="1073741832" data-cs-arch="5" data-cs-mode="2147483664">sparc64 - SPARC V9 64-bit big-endian</option>
+          </optgroup>
+          <optgroup label="Experimental">
+            <option data-ks-arch="7" data-ks-mode="1073741824" data-cs-arch="6" data-cs-mode="0">s390x SystemZ</option>
+            <option data-ks-arch="9" data-ks-mode="0" data-cs-arch="11" data-cs-mode="0">Ethereum Virtual Machine</option>
+            <option data-ks-arch="8" data-ks-mode="1073741824">Hexagon (assembler only)</option>
+            <option data-cs-arch="7" data-cs-mode="0">XCore (disassembler only)</option>
+            <option data-cs-arch="8" data-cs-mode="2147483680">M68K 68040 (disassembler only)</option>
+            <option data-cs-arch="9" data-cs-mode="0">TMS320C64x (disassembler only)</option>
+            <option data-cs-arch="10" data-cs-mode="1">M680X HD6301 (disassembler only)</option>
+            <option data-cs-arch="10" data-cs-mode="4">M680X HD6309 (disassembler only)</option>
+            <option data-cs-arch="10" data-cs-mode="8">M680X M6800 (disassembler only)</option>
+            <option data-cs-arch="10" data-cs-mode="16">M680X M6801 (disassembler only)</option>
+            <option data-cs-arch="10" data-cs-mode="32">M680X M6805 (disassembler only)</option>
+            <option data-cs-arch="10" data-cs-mode="64">M680X M6808 (disassembler only)</option>
+            <option data-cs-arch="10" data-cs-mode="128">M680X M6809 (disassembler only)</option>
+            <option data-cs-arch="10" data-cs-mode="256">M680X M6811 (disassembler only)</option>
+            <option data-cs-arch="10" data-cs-mode="512">M680X CPU12 (disassembler only)</option>
+            <option data-cs-arch="10" data-cs-mode="1024">M680X HCS08 (disassembler only)</option>
+            <option data-cs-arch="12" data-cs-mode="0">MOS65XX (disassembler only)</option>
+            <option data-cs-arch="13" data-cs-mode="0">WASM (disassembler only)</option>
+            <option data-cs-arch="14" data-cs-mode="0">BPF (disassembler only)</option>
+            <option data-cs-arch="15" data-cs-mode="0">rv32gc - RISC-V 32-bit (disassembler only)</option>
+            <option data-cs-arch="15" data-cs-mode="0">rv64gc - RISC-V 64-bit (disassembler only)</option>
+          </optgroup>
         </select>
         <button class="btn-assemble" id="btn-assemble" title="Assemble instructions (Ctrl+Enter)" disabled>
           Assemble
@@ -70,7 +106,7 @@ SYSCALL
       </button>
     </div>
   </div>
-  <footer>Powered by <a href="https://github.com/erdnaxe/disaweb/">disaweb</a></footer>
+  <footer>Alpha stage, don't expect things to work, <a href="https://github.com/erdnaxe/assembler-explorer/" target="about:blank">source code</a></footer>
 
   <script type="module" src="main.js"></script>
 </body>
