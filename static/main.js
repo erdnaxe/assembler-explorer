@@ -1,9 +1,7 @@
 'use strict'
 
 import loadCapstoneModule from './libcapstone.js'
-import * as csc from './libcapstone-const.js'
 import loadKeystoneModule from './libkeystone.js'
-import * as ksc from './libkeystone-const.js'
 
 /**
  * Assemble content from left textarea to right textarea
@@ -16,7 +14,7 @@ function assemble () {
   // Create keystone instance
   const ksPtr = ksModule._malloc(4)
   let err = ksModule._ks_open(ksArch, ksMode, ksPtr)
-  if (err !== ksc.KS_ERR_OK) {
+  if (err !== 0) {
     ksModule._free(ksPtr)
     const errMsg = ksModule.UTF8ToString(ksModule._ks_strerror(err))
     console.log('error ks_open', errMsg)
@@ -34,7 +32,7 @@ function assemble () {
   const ksHandle = ksModule.getValue(ksPtr, '*')
   ksModule._ks_asm(ksHandle, bufferPtr, address, 0x0, insnPtr, sizePtr, countPtr)
   err = ksModule._ks_errno(ksHandle)
-  if (err !== ksc.KS_ERR_OK) {
+  if (err !== 0) {
     const errMsg = ksModule.UTF8ToString(ksModule._ks_strerror(err))
     console.log('error ks_asm', errMsg)
   } else {
@@ -78,7 +76,7 @@ function disassemble () {
   // Create capstone instance
   const csPtr = csModule._malloc(4)
   let err = csModule._cs_open(csArch, csMode, csPtr)
-  if (err !== csc.CS_ERR_OK) {
+  if (err !== 0) {
     csModule._free(csPtr)
     const errMsg = csModule.UTF8ToString(csModule._cs_strerror(err))
     console.log('error cs_open', errMsg)
@@ -94,7 +92,7 @@ function disassemble () {
   const insnPtrPtr = csModule._malloc(4)
   const count = csModule._cs_disasm(csHandle, bufferPtr, bufferLen, address, 0, 0, insnPtrPtr)
   err = csModule._cs_errno(csHandle)
-  if (err !== csc.CS_ERR_OK) {
+  if (err !== 0) {
     const errMsg = ksModule.UTF8ToString(ksModule._cs_strerror(err))
     console.log('cs_disasm error', errMsg)
   }
@@ -151,10 +149,10 @@ let csMode = 8  // 64-bit
 // Hook events
 document.getElementById('select-arch').addEventListener('change', (e) => {
   const data = e.target.selectedOptions[0].dataset
-  ksArch = parseInt(data.ksArch) ?? 4
-  ksMode = parseInt(data.ksMode) ?? 8
-  csArch = parseInt(data.csArch) ?? 3
-  csMode = parseInt(data.csMode) ?? 8
+  ksArch = parseInt(data.ksArch) ?? 0
+  ksMode = parseInt(data.ksMode) ?? 0
+  csArch = parseInt(data.csArch) ?? 0
+  csMode = parseInt(data.csMode) ?? 0
 
   // Enable editor only if selected architecture is available
   document.getElementById('btn-assemble').disabled = !('ksArch' in data)
